@@ -1,0 +1,115 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Config",
+  "type": "object",
+  "required": [
+    "commands"
+  ],
+  "properties": {
+    "commands": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": {
+          "$ref": "#/definitions/Command"
+        }
+      }
+    }
+  },
+  "definitions": {
+    "Command": {
+      "type": "object",
+      "properties": {
+        "alias": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "children": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "#/definitions/Command"
+            }
+          }
+        },
+        "cmd": {
+          "anyOf": [
+            {
+              "$ref": "#/definitions/CommandType"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "onfailure": {
+          "anyOf": [
+            {
+              "$ref": "#/definitions/CommandType"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "onsuccess": {
+          "anyOf": [
+            {
+              "$ref": "#/definitions/CommandType"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "refer": {
+          "anyOf": [
+            {
+              "$ref": "#/definitions/CommandType"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "run_async": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "shell": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "strict": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        }
+      }
+    },
+    "CommandType": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      ]
+    }
+  }
+}

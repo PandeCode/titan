@@ -1,0 +1,78 @@
+# yaml-language-server: $schema=./titan.schema.json
+
+commands:
+    - test:
+          cmd: "echo hello"
+          children:
+            - not:
+                cmd: "echo world"
+                children:
+                  - not:
+                      cmd: "echo this is not a"
+    - update:
+        children:
+            - all:
+                refer:
+                    .paru
+                    .pnpm
+                    .python
+                    $test
+            - pacman:
+                cmd: sudo pacman -Syu
+            - paru:
+                cmd: paru -Syu
+            - yarn:
+                cmd: yarn global
+            - pnpm:
+                cmd: sudo pnpm -g upgrade;
+            - python:
+                cmd: python3 -m pip install --upgrade $(python3 -m pip list --outdated | sed "1,2d;s/ .*//;s/pygls//;")
+                shell: true
+    - rust:
+          cmd: hello
+          children:
+              - build:
+                    before: echo Starting
+                    commands:
+                        - echo Starting
+                        - cargo build
+                        - echo Done
+                    after: echo Done
+                    onsuccess: echo success
+                    onfailure: echo fail
+              - run:
+                    before: echo Starting
+                    commands:
+                        - echo Starting
+                        - cargo run
+                        - echo Done
+                    after: echo Done
+                    onfailure: echo fail
+    - config:
+          before: echo config
+          after: echo config
+          alias: /usr/bin/git --git-dir=$HOME/dotfiles-wsl/ --work-tree=$HOME
+
+    - system:
+          run_async: true
+          commands:
+              - echo getting cpu info
+              - echo getting gpu info
+              - echo getting ram info
+
+          children:
+              - cpu:
+                    commands: echo getting cpu info
+                    children:
+                        - hogs:
+                              commands: echo getting cpu hogs
+
+    - music:
+          commands: getting playing song
+          children:
+              - play:
+                    params: ["name"]
+                    commands: "echo playing {{name}}"
+              - play_next:
+                    params: ["other_name", "another_name"]
+                    commands: "echo playing {{name}}"

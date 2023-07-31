@@ -1,0 +1,26 @@
+[package]
+name = "titan"
+version = "0.1.0"
+edition = "2021"
+description = "One command to rule them all"
+
+[dependencies]
+clap = { version = "4.3.19", features = ["derive"] }
+
+dirs = "5.0"
+
+env_logger = "0.10.0"
+log = "0.4.19"
+
+execute = "0.2.12"
+
+miette = { version = "5.10.0", features = ["fancy"] }
+
+schemars = "0.8.12"
+
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0.104"
+serde_yaml = "0.9.25"
+
+tokio = { version = "1.29.1", features = ["full"] }
+thiserror = "1.0.44"
