@@ -1,4 +1,3 @@
-#![feature(iterator_try_reduce)]
 mod command_line;
 mod config;
 mod errors;
