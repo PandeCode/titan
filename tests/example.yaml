@@ -4,30 +4,29 @@ commands:
     - test:
           cmd: "echo hello"
           children:
-            - not:
-                cmd: "echo world"
-                children:
-                  - not:
-                      cmd: "echo this is not a"
+              - not:
+                    cmd: "echo world"
+                    children:
+                        - not:
+                              cmd: "echo this is not a"
     - update:
-        children:
-            - all:
-                refer:
-                    .paru
-                    .pnpm
-                    .python
-                    $test
-            - pacman:
-                cmd: sudo pacman -Syu
-            - paru:
-                cmd: paru -Syu
-            - yarn:
-                cmd: yarn global
-            - pnpm:
-                cmd: sudo pnpm -g upgrade;
-            - python:
-                cmd: python3 -m pip install --upgrade $(python3 -m pip list --outdated | sed "1,2d;s/ .*//;s/pygls//;")
-                shell: true
+          children:
+              - all:
+                    refer: .paru
+                        .pnpm
+                        .python
+                        $test
+              - pacman:
+                    cmd: sudo pacman -Syu
+              - paru:
+                    cmd: paru -Syu
+              - yarn:
+                    cmd: yarn global
+              - pnpm:
+                    cmd: sudo pnpm -g upgrade;
+              - python:
+                    cmd: python3 -m pip install --upgrade $(python3 -m pip list --outdated | sed "1,2d;s/ .*//;s/pygls//;")
+                    shell: true
     - rust:
           cmd: hello
           children:
