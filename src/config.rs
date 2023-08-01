@@ -12,6 +12,21 @@ pub enum CommandType {
     VecString(Vec<String>),
 }
 
+impl ToString for CommandType {
+    fn to_string(&self) -> String {
+        format!(
+            "[{}]",
+            match self {
+                Self::String(s) => s.to_owned(),
+                Self::VecString(s) => s
+                    .iter()
+                    .fold("".to_owned(), |acc, val| format!("{}\n{}", acc, val)),
+            }
+        )
+        .to_owned()
+    }
+}
+
 #[derive(Debug, Default, PartialEq, Deserialize, JsonSchema)]
 pub struct Command {
     pub children: Option<Vec<HashMap<String, Command>>>,

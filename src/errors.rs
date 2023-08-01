@@ -1,3 +1,4 @@
+
 use miette::Diagnostic;
 use thiserror::Error;
 
@@ -35,11 +36,23 @@ Check parameters if you meant to access children"
 
 impl CommandNotRunnable {
     pub fn with_command(command: &Command) -> Self {
+        let keys: Vec<&String> = command
+            .children
+            .as_ref()
+            .unwrap()
+            .iter()
+            .flat_map(|map| map.keys())
+            .collect();
+
+        let keys: Vec<String> = keys.iter().map(|key| format!("{:?}", key)).collect();
+
+        let children = format!("{}", keys.join(","));
+
         CommandNotRunnable {
             help: Some(format!(
-                "Command neither specifies an 'alias' or 'cmd' required to be runnable. 
-Or check parameters if you meant to access children '{:#?}'",
-                command,
+                "Command neither specifies an 'alias' or 'cmd' required to be runnable.
+            Or check parameters if you meant to access children [{}]",
+                children
             )),
         }
     }
