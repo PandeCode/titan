@@ -1,9 +1,31 @@
 # yaml-language-server: $schema=./titan.schema.json
 
 commands:
+    - ifconfig:
+          cmd: curl ifconfig.me
+          children:
+              - ip:
+                    cmd: curl ifconfig.me/ip
+              - ua:
+                    cmd: curl ifconfig.me/ua
+              - lang:
+                    cmd: curl ifconfig.me/lang
+              - encoding:
+                    cmd: curl ifconfig.me/encoding
+              - mime:
+                    cmd: curl ifconfig.me/mime
+              - forwarded:
+                    cmd: curl ifconfig.me/forwarded
+              - all:
+                    cmd: curl ifconfig.me/all
+    - localip:
+          cmd: "ifconfig | grep inet"
+          shell: true
     - test:
           cmd: "echo hello"
           children:
+              - world:
+                    alias: git
               - not:
                     cmd: "echo world"
                     children:
@@ -25,7 +47,7 @@ commands:
               - pnpm:
                     cmd: sudo pnpm -g upgrade;
               - python:
-                    cmd: python3 -m pip install --upgrade $(python3 -m pip list --outdated | sed "1,2d;s/ .*//;s/pygls//;")
+                    cmd: python3 -m pip install --upgrade $(python3 -m pip list --outdated | sed '1,2d;s/ .*//;s/pygls//;')
                     shell: true
     - rust:
           cmd: hello

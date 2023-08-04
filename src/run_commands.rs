@@ -1,16 +1,36 @@
-use miette::Result;
+use execute::shell;
+use miette::{IntoDiagnostic, Result};
 
 use crate::config::{Command, CommandType, Config};
 use crate::errors::{CommandNotRunnable, SubCommandNotFound};
 
-async fn cmd_wrapper(command: &str) -> u8 {
-    log::info!("Running command: '{}'", command);
-    0
-}
+use execute::Execute;
 
 enum ReturnCode {
-    ReturnCode(u8),
-    VecStatusCode(Vec<u8>),
+    ReturnCode(i32),
+    VecStatusCode(Vec<i32>),
+}
+
+impl Default for ReturnCode {
+    fn default() -> Self {
+        Self::ReturnCode(1)
+    }
+}
+
+async fn cmd_wrapper(command: &str) -> i32 {
+    if let Some(exit_code) = shell(command)
+        .execute_output()
+        .into_diagnostic()
+        .unwrap()
+        .status
+        .code()
+    {
+        log::info!("Run command '{}'", command);
+        exit_code
+    } else {
+        log::error!("Failed to run command '{}'", command);
+        -1
+    }
 }
 
 fn was_successful(success: ReturnCode) -> bool {
@@ -35,31 +55,26 @@ macro_rules! run_command {
         run_command($command, None)
     };
 }
-async fn run_command(command: Option<&CommandType>, strict: Option<bool>) -> Option<ReturnCode> {
+async fn run_command(command: &CommandType, strict: Option<bool>) -> ReturnCode {
     match command {
-        Some(command) => Some({
-            match command {
-                CommandType::String(command) => ReturnCode::ReturnCode(cmd_wrapper(&command).await),
-                CommandType::VecString(command) => {
-                    let mut return_codes: Vec<u8> = Vec::new();
-                    for cmd in command {
-                        let return_code = cmd_wrapper(cmd.as_str()).await;
+        CommandType::String(command) => ReturnCode::ReturnCode(cmd_wrapper(&command).await),
+        CommandType::VecString(command) => {
+            let mut return_codes: Vec<i32> = Vec::new();
+            for cmd in command {
+                let return_code = cmd_wrapper(cmd.as_str()).await;
 
-                        if let Some(strict) = strict {
-                            if strict {
-                                if return_code != 0 {
-                                    return Some(ReturnCode::VecStatusCode(return_codes));
-                                }
-                            }
+                if let Some(strict) = strict {
+                    if strict {
+                        if return_code != 0 {
+                            return ReturnCode::VecStatusCode(return_codes);
                         }
-
-                        return_codes.push(return_code)
                     }
-                    ReturnCode::VecStatusCode(return_codes)
                 }
+
+                return_codes.push(return_code)
             }
-        }),
-        None => None,
+            ReturnCode::VecStatusCode(return_codes)
+        }
     }
 }
 
@@ -92,35 +107,32 @@ pub(crate) async fn run_commands(subcommands: &[String], config: Config) -> Resu
         }
     }
 
-    if current_command.alias.is_none() {
-        if current_command.cmd.is_none() {
-            // Err(CommandNotRunnable::default())?
+    let mut success = Default::default();
+    if let Some(cmd) = &current_command.cmd {
+        success = run_command!(&cmd).await;
+    } else {
+        if let Some(alias) = &current_command.alias {
+            success = run_command!(&CommandType::String(alias.to_owned())).await;
+        } else {
             Err(CommandNotRunnable::with_command(current_command))?
         }
-    }
+    };
 
-    match run_command!(current_command.cmd.as_ref()).await {
-        Some(success) => {
-            if was_successful(success) {
-                log::debug!("All commands successful");
+    if was_successful(success) {
+        log::debug!("All commands successful");
 
-                if current_command.onsuccess.is_some() {
-                    run_command!(current_command.onsuccess.as_ref()).await;
-                    log::debug!("Run success command");
-                }
-
-                run_command!(current_command.onsuccess.as_ref()).await;
-            } else {
-                log::debug!("Some commands failed");
-
-                if current_command.onfailure.is_some() {
-                    run_command!(current_command.onfailure.as_ref()).await;
-                    log::debug!("Run failure command");
-                }
-            }
+        if let Some(onsuccess) = current_command.onsuccess.as_ref() {
+            run_command!(onsuccess).await;
+            log::debug!("Run success command");
         }
-        None => log::debug!("this was none, {:#?}", current_command),
-    }
+    } else {
+        log::debug!("Some commands failed");
+
+        if let Some(onfailure) = current_command.onfailure.as_ref() {
+            run_command!(onfailure).await;
+            log::debug!("Run failure command");
+        }
+    };
 
     Ok(())
 }
