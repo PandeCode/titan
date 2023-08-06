@@ -11,6 +11,12 @@ pub struct Options {
     #[arg(short, long, default_value_t = false)]
     pub json_schema: bool,
 
+    #[arg(short, long, default_value_t = false)]
+    pub fish_completions: bool,
+
+    #[arg(short, long, default_value_t = false)]
+    pub print_config: bool,
+
     #[arg()]
     pub args: Vec<String>,
 

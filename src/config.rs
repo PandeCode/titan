@@ -5,7 +5,7 @@ use miette::IntoDiagnostic;
 
 use serde::Deserialize;
 
-#[derive(Debug, PartialEq, Deserialize, JsonSchema)]
+#[derive(Debug, Clone, PartialEq, Deserialize, JsonSchema)]
 #[serde(untagged)]
 pub enum CommandType {
     String(String),
@@ -27,7 +27,7 @@ impl ToString for CommandType {
     }
 }
 
-#[derive(Debug, Default, PartialEq, Deserialize, JsonSchema)]
+#[derive(Debug, Clone, Default, PartialEq, Deserialize, JsonSchema)]
 pub struct Command {
     pub children: Option<Vec<HashMap<String, Command>>>,
 
@@ -46,6 +46,15 @@ pub struct Command {
 }
 
 impl Command {
+    pub fn children_names(self: &Self) -> Option<Vec<String>> {
+        if let Some(c) = &self.children {
+            let keys: Vec<&String> = c.iter().flat_map(|map| map.keys()).collect();
+            Some(keys.iter().map(|key| format!("{key:?}")).collect())
+        } else {
+            None
+        }
+    }
+
     pub fn find_subcommand(self: &Self, subcommand: String) -> Option<&Command> {
         match &self.children {
             Some(children) => {
@@ -63,7 +72,7 @@ impl Command {
     }
 }
 
-#[derive(Debug, PartialEq, Deserialize, JsonSchema)]
+#[derive(Debug, Clone, PartialEq, Deserialize, JsonSchema)]
 pub struct Config {
     pub commands: Vec<HashMap<String, Command>>,
 }
@@ -83,5 +92,11 @@ impl Config {
         serde_json::to_string_pretty(&schema_for!(Self))
             .into_diagnostic()
             .expect("Failed to generate schema for Config")
+    }
+
+    pub fn command_names(self: Self) -> Vec<String> {
+        let keys: Vec<&String> = self.commands.iter().flat_map(|map| map.keys()).collect();
+
+        keys.iter().map(|key| format!("{:?}", key)).collect()
     }
 }

@@ -24,3 +24,4 @@ serde_yaml = "0.9.25"
 
 tokio = { version = "1.29.1", features = ["full"] }
 thiserror = "1.0.44"
+ptree = "0.4.0"

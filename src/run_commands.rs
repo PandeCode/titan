@@ -25,10 +25,10 @@ async fn cmd_wrapper(command: &str) -> i32 {
         .status
         .code()
     {
-        log::info!("Run command '{}'", command);
+        log::info!("Run command '{command}'");
         exit_code
     } else {
-        log::error!("Failed to run command '{}'", command);
+        log::error!("Failed to run command '{command}'");
         -1
     }
 }

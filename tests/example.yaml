@@ -31,6 +31,12 @@ commands:
                     children:
                         - not:
                               cmd: "echo this is not a"
+                              children:
+                                  - not:
+                                        cmd: "echo world"
+                                        children:
+                                            - not:
+                                                  cmd: "echo this is not a"
     - update:
           children:
               - all:
