@@ -98,25 +98,32 @@ pub(crate) async fn run_commands(subcommands: &[String], config: Config) -> Resu
 
     let mut current_command = current_command.unwrap();
 
-    for subcommand in subcommands[1..].iter() {
+    let mut success = Default::default();
+    let mut should_run_cmd = true;
+
+    for (i, subcommand) in subcommands[1..].iter().enumerate() {
         if let Some(command) = current_command.find_subcommand(subcommand.to_owned()) {
             current_command = command;
             log::debug!("Added Subcommand: '{:?}'", current_command)
         } else {
-            Err(SubCommandNotFound {})?
+            if let Some(alias) = &current_command.alias {
+                let s = subcommands[i + 1..].join(" ");
+                should_run_cmd = false;
+                success = run_command!(&CommandType::String(format!("{alias} {s}"))).await;
+                break;
+            } else {
+                Err(SubCommandNotFound {})?
+            }
         }
     }
 
-    let mut success = Default::default();
-    if let Some(cmd) = &current_command.cmd {
-        success = run_command!(&cmd).await;
-    } else {
-        if let Some(alias) = &current_command.alias {
-            success = run_command!(&CommandType::String(alias.to_owned())).await;
+    if should_run_cmd {
+        if let Some(cmd) = &current_command.cmd {
+            success = run_command!(&cmd).await
         } else {
             Err(CommandNotRunnable::with_command(current_command))?
         }
-    };
+    }
 
     if was_successful(success) {
         log::debug!("All commands successful");
