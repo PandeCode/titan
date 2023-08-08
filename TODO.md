@@ -12,6 +12,6 @@
     [ ] Allow documentation of subcommands
     [ ] Add refs
 
-
 ## Bugs
+
     [ ] fish completions work only 1 layer deep

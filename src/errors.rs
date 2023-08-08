@@ -21,6 +21,18 @@ pub struct CommandNotRunnable {
     help: Option<String>,
 }
 
+#[derive(Error, Debug, Diagnostic)]
+#[error("No config file found")]
+#[diagnostic(help(
+    r#"Specifiy at least one config file or a default:
+  - ~/.config/titan/config.toml
+  - ~/.titan.toml
+  - ~/titan.toml
+  - $PWD/.titan.toml
+  - $PWD/titan.toml"#
+))]
+pub struct NoConfigCouldBeFound {}
+
 impl Default for CommandNotRunnable {
     fn default() -> Self {
         CommandNotRunnable {

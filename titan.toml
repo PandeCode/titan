@@ -1,0 +1,4 @@
+commands:
+   - lol:
+      cmd:
+         echo get wreck

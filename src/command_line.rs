@@ -1,5 +1,8 @@
+use std::path::PathBuf;
+
 use clap::Parser;
 use env_logger::Env;
+use miette::IntoDiagnostic;
 
 #[derive(Parser)]
 #[clap(version, about, long_about = None)]
@@ -20,7 +23,7 @@ pub struct Options {
     #[arg()]
     pub args: Vec<String>,
 
-    #[arg(long, short, default_value_t=format!("{}{}", dirs::home_dir().unwrap().display(), "/.titan.toml"))]
+    #[arg(long, short, default_value_t={"$HOME/.titan.toml".to_owned()})]
     pub config: String,
 }
 
