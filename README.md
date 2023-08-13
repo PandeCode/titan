@@ -51,7 +51,6 @@ titan localip     # runs "ifconfig | grep inet"
 ## Todo
 
 ### Dev
-
     - [x] Make aliases work
     - [x] Fish documentation (sure other shells too)
     - [x] Make things acutally execute
@@ -64,5 +63,4 @@ titan localip     # runs "ifconfig | grep inet"
     - [ ] Add refs
 
 ### Bugs
-
     [ ] fish completions work only 1 layer deep
