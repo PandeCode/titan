@@ -51,11 +51,11 @@ titan localip     # runs "ifconfig | grep inet"
 ## Todo
 
 ### Dev
-- [x] Make aliases work
-- [x] Fish documentation (sure other shells too)
-- [x] Make things acutally execute
-- [x] printing tree structure
-- [x] pull config files from parent director(y/ies)
+- [-] Make aliases work
+- [-] Fish documentation (sure other shells too)
+- [-] Make things acutally execute
+- [-] printing tree structure
+- [-] pull config files from parent director(y/ies)
 - [ ] add more info to tree structure
 - [ ] Documentation
 - [ ] Get better naming schemes
@@ -63,4 +63,4 @@ titan localip     # runs "ifconfig | grep inet"
 - [ ] Add refs
 
 ### Bugs
-[ ] fish completions work only 1 layer deep
+- [ ] fish completions work only 1 layer deep
