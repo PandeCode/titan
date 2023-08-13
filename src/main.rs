@@ -42,9 +42,7 @@ async fn main() -> Result<()> {
         possible_paths.push(opts.config.into());
     }
 
-        println!("b4: {possible_paths:?}");
     possible_paths.append(&mut possible_parents(cwd));
-        println!("after: {possible_paths:?}");
 
     let mut config_contents = vec![];
     for path in possible_paths {

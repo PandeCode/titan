@@ -9,10 +9,10 @@ Still in development
 
 ## Configuration
 
-titan looks in the following directories
+Titan looks in the following directories in addition to the the current working directory's parents
 
- - $PWD/.titan.toml
- - $PWD/titan.toml
+ - {current working directory}/.titan.toml
+ - {current working directory}/titan.toml
  - $HOME/.titan.toml
  - $HOME/titan.toml
  - /etc/.titan.toml
