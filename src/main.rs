@@ -6,7 +6,7 @@ mod print_config;
 mod run_commands;
 mod tests;
 
-use std::path::PathBuf;
+
 
 use miette::{IntoDiagnostic, Result};
 
@@ -31,7 +31,6 @@ async fn main() -> Result<()> {
     let cwd = std::env::current_dir().into_diagnostic().unwrap();
     let home = dirs::home_dir().unwrap();
     let mut possible_paths = vec![
-        PathBuf::from(&opts.config),
         cwd.join(".titan.toml"),
         cwd.join("titan.toml"),
         home.join(".config/titan/config.toml"),
