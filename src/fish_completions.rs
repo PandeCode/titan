@@ -7,8 +7,10 @@ fn get_completions(parent: &String, command: &crate::config::Command) -> Option<
         .replace('"', "");
 
     if !commands.is_empty() {
-        ret += format!( r#"complete -c titan -n "__fish_seen_subcommand_from {parent}" -a "{commands}"
-"#,)
+        ret += format!(
+            r#"complete -c titan -n "__fish_seen_subcommand_from {parent}" -a "{commands}"
+"#,
+        )
         .as_str();
     }
 

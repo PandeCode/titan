@@ -6,7 +6,7 @@ mod print_config;
 mod run_commands;
 mod tests;
 
-
+use std::path::PathBuf;
 
 use miette::{IntoDiagnostic, Result};
 
@@ -41,6 +41,10 @@ async fn main() -> Result<()> {
     if opts.config != opts_config_default {
         possible_paths.push(opts.config.into());
     }
+
+        println!("b4: {possible_paths:?}");
+    possible_paths.append(&mut possible_parents(cwd));
+        println!("after: {possible_paths:?}");
 
     let mut config_contents = vec![];
     for path in possible_paths {
@@ -79,4 +83,19 @@ async fn main() -> Result<()> {
     }
 
     run_commands(&opts.args, parsed_config).await
+}
+
+fn possible_parents(dir: PathBuf) -> Vec<PathBuf> {
+    let mut ret = vec![];
+
+    if let Some(parent) = dir.parent() {
+        ret.push(parent.join(".titan.toml"));
+        ret.push(parent.join("titan.toml"));
+
+        if let Some(parent) = parent.parent() {
+            ret.append(&mut possible_parents(parent.to_path_buf()))
+        }
+    }
+
+    ret
 }
