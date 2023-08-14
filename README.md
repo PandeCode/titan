@@ -1,13 +1,16 @@
 # Titan
+Still in development
 
 One command to rule them all
 
-Kinda like make, but works globally
-Still in development
+## About
+Shorten the commands you type.
 
-[YAML](https://yaml.org)
+Similar to build systems like make, but works globally and has multiple configuration files.
 
 ## Configuration
+
+[YAML](https://yaml.org)
 
 Titan looks in the following directories in addition to the the current working directory's parents
 
