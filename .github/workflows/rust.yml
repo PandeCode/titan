@@ -42,3 +42,4 @@ jobs:
           files: |
             target/release/titan
             SHA256
+            LICENSE
