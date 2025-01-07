@@ -30,7 +30,7 @@ jobs:
       - name: Calculate SHA-256
         run: |
           mkdir artifacts
-          sha256sum target/release/titan > SHA256SUMS
+          sha256sum target/release/titan > SHA256
         shell: bash
 
       - name: Upload Release Assets
