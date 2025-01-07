@@ -10,12 +10,35 @@ env:
     CARGO_TERM_COLOR: always
 
 jobs:
-    build:
-        runs-on: ubuntu-latest
+  build:
+    if: startsWith(github.event.head_commit.message, 'build')
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
 
-        steps:
-            - uses: actions/checkout@v3
-            - name: Build
-              run: cargo build --verbose
-            - name: Run tests
-              run: cargo test --verbose
+      - name: Run Tests
+        run: cargo test --verbose
+
+      - name: Build Binary
+        run: |
+          cargo build --release --verbose
+          TAG_NAME=$(date +"build-%Y%m%d-%H%M%S")
+          echo "TAG_NAME=$TAG_NAME" >> $GITHUB_ENV
+
+      - name: Calculate SHA-256
+        run: |
+          mkdir artifacts
+          sha256sum target/release/titan > SHA256SUMS
+        shell: bash
+
+      - name: Upload Release Assets
+        uses: softprops/action-gh-release@v2
+        with:
+          prerelease: true
+          name: ${{ env.TAG_NAME }}
+          tag_name: ${{ env.TAG_NAME }}
+          files: |
+            target/release/titan
+            SHA256
